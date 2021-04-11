@@ -1,0 +1,8 @@
+#!/bin/bash
+
+psql -c "
+    CREATE USER $DATADOG_DB_USER WITH PASSWORD '$DATADOG_DB_PASSWORD';
+    GRANT pg_monitor TO $DATADOG_DB_USER;
+    GRANT SELECT ON pg_stat_database TO $DATADOG_DB_USER;
+    GRANT SELECT ON pg_stat_activity TO $DATADOG_DB_USER;
+"

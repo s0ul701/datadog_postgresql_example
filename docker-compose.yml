@@ -1,0 +1,51 @@
+version: '3.3'
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: ./Dockerfile
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    env_file:
+      - ./db/.env
+      - ./datadog.env
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg_logs:/pg_logs
+    labels:
+      com.datadoghq.ad.check_names: '["postgres"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: >-
+        [{
+          "host": "%%host%%",
+          "port": 5432,
+          "username": "<DATADOG_DB_USER>",
+          "password": "<DATADOG_DB_PASSWORD>",
+          "collect_activity_metrics": "true",
+          "relations": [{
+            "relation_regex": ".*"
+          }]
+        }]
+      com.datadoghq.ad.logs: >-
+        [{
+          "type": "file",
+          "source": "postgresql",
+          "service": "database",
+          "path": "/pg_logs/pg.log",
+          "log_processing_rules": [{
+            "type": "multi_line",
+            "name": "log_start_with_date",
+            "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"
+          }]
+        }]
+
+  datadog-agent:
+    image: datadog/agent:7.26.0-jmx
+    env_file:
+      - ./datadog.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /opt/datadog-agent/run:/opt/datadog-agent/run:rw
+      - ./pg_logs:/pg_logs
