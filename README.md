@@ -9,7 +9,6 @@
 
 1. [Регистрация](https://app.datadoghq.com/signup) (создание личного кабинета на стороне DataDog, откуда и осуществляется мониторинг)
 2. [Получение API-ключа](https://app.datadoghq.eu/account/settings#api)
-![get_api_key.png](https://github.com/s0ul701/datadog_postgresql_example/blob/master/readme_src/get_api_key.png)
 
 ---
 
@@ -47,7 +46,6 @@ DD_PROCESS_AGENT_ENABLED=true   # позволяет просматривать 
 
 Результаты настроек доступны по [ссылке](https://app.datadoghq.eu/containers):
 
-![init_config_result.png](https://github.com/s0ul701/datadog_postgresql_example/blob/master/readme_src/init_config_result.png)
 *Ссылки*:
 
 1. [Документация](https://docs.datadoghq.com/integrations/faq/compose-and-the-datadog-agent/) по базовой настройке связки DataDog/Docker/Docker Compose;
