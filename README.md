@@ -83,10 +83,10 @@ services:
             com.datadoghq.ad.init_configs: '[{}]'   # инициализирующие настройки для взаимодействия DataDog и PostgreSQL (не менять!)
             com.datadoghq.ad.instances: >-  # основной блок настройки соединения DataDog и PostgreSQL
                 [{
-                    "host": "%%host%%", # на основе этого шаблона DataDog подставляет IP-адрес контейнера с PostgreSQL (не менять!)
-                    "port": 5432,   # порт PostgreSQL
-                    "username": "datadog_db_user",  # имя пользователя для DataDog, созданного на этапе инициализации PostgreSQL для сбора метрик
-                    "password": "qwerty1234",   # пароль пользователя DataDog в PostgreSQL
+                    "host": "%%host%%", # вместо этой шаблонной переменной DataDog подставляет IP-адрес контейнера с PostgreSQL
+                    "port": "%%port%%",   # порт PostgreSQL
+                    "username": "%%env_DATADOG_DB_USER%%",  # вместо этой шаблонной переменной DataDog подставляет значение переменной окружения DATADOG_DB_USER
+                    "password": "%%env_DATADOG_DB_PASSWORD%%",   # вместо этой шаблонной переменной DataDog подставляет значение переменной окружения DATADOG_DB_PASSWORD
                     "collect_activity_metrics": "true", # разрешение сбора метрик транзакций
                     "relations": [{             # задание имен таблиц, 
                         "relation_regex": ".*"  # статистику которых 
@@ -96,11 +96,11 @@ services:
                 [{
                     "type": "file", # тип источника логов
                     "source": "postgresql", # название интеграции (не менять!)
-                    "service": "database",  # имя сервиса для отображение в UI DataDog
+                    "service": "postgresql",  # имя сервиса для отображение в UI DataDog
                     "path": "/pg_logs/pg.log",  # путь до файла с логами (внутри контейнера DataDog-агента!)
                     "log_processing_rules": [{  # блок правил обработки логов
                         "type": "multi_line",   # сообщение DataDog`у о том, что логи могут быть многострочными
-                        "name": "log_start_with_date",
+                        "name": "logs",
                         "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])" # паттерн начала унарного лог-сообщения
                     }]
                 }]
@@ -193,4 +193,5 @@ DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true   # включает у DataDog-аге
 3. Описание таблиц [pg_stat_database/pg_stat_activity](https://postgrespro.ru/docs/postgresql/12/monitoring-stats);
 4. Пример [postgresql.conf](https://github.com/postgres/postgres/blob/master/src/backend/utils/misc/postgresql.conf.sample) с подробным описанием настроек;
 5. [Статья](https://docs.datadoghq.com/agent/docker/log/?tab=dockercompose) по настройке логирования DataDog-агентом;
-6. [Статья](https://docs.datadoghq.com/agent/docker/integrations/?tab=docker) по настройке автообнаружения интеграций DataDog-агентом.
+6. [Статья](https://docs.datadoghq.com/agent/docker/integrations/?tab=docker) по настройке автообнаружения интеграций DataDog-агентом;
+7. [Документация](https://docs.datadoghq.com/agent/faq/template_variables/) по шаблонным переменным.
